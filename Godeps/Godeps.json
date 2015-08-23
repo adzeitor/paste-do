@@ -1,13 +1,56 @@
 {
 	"ImportPath": "github.com/adzeitor/paste-do",
 	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/microcosm-cc/bluemonday",
+			"Rev": "2b7763a06cb6d740966c9a8e6a001eee9679be0e"
+		},
+		{
+			"ImportPath": "github.com/russross/blackfriday",
+			"Comment": "v1.2-80-g8cec3a8",
+			"Rev": "8cec3a854e68dba10faabbe31c089abf4a3e57a6"
+		},
+		{
+			"ImportPath": "github.com/sergi/go-diff/diffmatchpatch",
+			"Rev": "ffccea18eeb30a700e65bdf8a9f99456e5d254fa"
+		},
 		{
 			"ImportPath": "github.com/shurcooL/github_flavored_markdown",
 			"Rev": "b3921bea4a899100a4fd522dd940b819af56e437"
+		},
+		{
+			"ImportPath": "github.com/shurcooL/highlight_diff",
+			"Rev": "8f0db662adc4a5ba63b4ca15bf66ab08123f7161"
+		},
+		{
+			"ImportPath": "github.com/shurcooL/highlight_go",
+			"Rev": "562bf7c1e73e56cf3c10c2506b1e29fccc63d1c9"
+		},
+		{
+			"ImportPath": "github.com/shurcooL/sanitized_anchor_name",
+			"Rev": "244f5ac324cb97e1987ef901a0081a77bfd8e845"
+		},
+		{
+			"ImportPath": "github.com/sourcegraph/annotate",
+			"Rev": "a44dd3d6d2fecf11026692aafe4124462bd2bf9a"
+		},
+		{
+			"ImportPath": "github.com/sourcegraph/syntaxhighlight",
+			"Rev": "637a8b8b94eca8bb8cd559b950cc4f42629ec137"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
+		},
+		{
+			"ImportPath": "gopkg.in/bsm/ratelimit.v1",
+			"Rev": "bda20d5067a03094fc6762f7ead53027afac5f28"
+		},
+		{
+			"ImportPath": "gopkg.in/bufio.v1",
+			"Comment": "v1",
+			"Rev": "567b2bfa514e796916c4747494d6ff5132a1dfce"
 		},
 		{
 			"ImportPath": "gopkg.in/redis.v3",
