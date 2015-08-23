@@ -5,5 +5,12 @@
     "image": "heroku/go",
     "mount_dir": "src/github.com/adzeitor/paste-do",
     "website": "https://github.com/adzeitor/paste-do",
-    "repository": "https://github.com/adzeitor/paste-do"
+    "repository": "https://github.com/adzeitor/paste-do",
+    "env": {
+        "BACKEND": {
+            "description": "backend type for store records: memory or redis ",
+            "value": "memory"
+        }
+    }
+
 }
