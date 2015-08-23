@@ -13,7 +13,7 @@ import (
 import "github.com/shurcooL/github_flavored_markdown"
 
 func todoHandler(storage Storage) http.HandlerFunc {
-	tmpl, _ := template.ParseFiles("todo.html")
+	tmpl, _ := template.ParseFiles("templates/todo.html")
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Path[len("/todo/"):]
 		val := storage.Get(id)
@@ -61,7 +61,7 @@ func postEditHandler(storage Storage) http.HandlerFunc {
 
 func indexHandler(storage Storage) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		t, _ := template.ParseFiles("index.html")
+		t, _ := template.ParseFiles("templates/index.html")
 		t.Execute(w, nil)
 	}
 	return fn

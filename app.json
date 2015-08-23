@@ -1,10 +1,9 @@
 {
-    name: "paste-do",
-    description: "pastebin like service for todo lists with markdown support",
-    keywords: [
-    ],
-    image: "heroku/go",
-    mount_dir: "src/github.com/adzeitor/paste-do",
-    website: "http://github.com/heroku/go-getting-started",
-    repository: "http://github.com/heroku/go-getting-started"
+    "name": "paste-do",
+    "description": "pastebin like service for todo lists with markdown support",
+    "keywords": [],
+    "image": "heroku/go",
+    "mount_dir": "src/github.com/adzeitor/paste-do",
+    "website": "https://github.com/adzeitor/paste-do",
+    "repository": "https://github.com/adzeitor/paste-do"
 }
