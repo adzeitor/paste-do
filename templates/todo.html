@@ -1,25 +1,34 @@
 <html>
 
-
+<head>
+  <link href="/public/bootstrap.min.css" rel="stylesheet">
+</head>
   <body>
 
-    <h1>Editing <a href="/todo/{{.ID}}">{{.ID}}</a> (visits: {{.Visits}})</h1>
+    <div class="container">
 
-    <time>{{.CreatedAt}}</time>
+      <h1><a href="/todo/{{.ID}}">{{.ID}}</a> (visits: {{.Visits}})</h1>
 
-    <hr />
 
-    <div>
-      {{.MarkdownContent}}
+      <a href="/todo/{{.ID}}">admin link</a> <br/>
+      <a href="/todo/{{.ID}}">read-only link</a>
+
+      <progress class="progress progress-success" value="25" max="100">25%</progress>
+      <time>{{.CreatedAt}}</time>
+
+      <hr />
+
+      <div>
+        {{.MarkdownContent}}
+      </div>
+
+      <hr />
+
+      <form action="/edit/{{.ID}}" method="POST">
+        <div><textarea name="content" rows="20" cols="80">{{.Content}}</textarea></div>
+        <div><input type="submit" value="Save"></div>
+      </form>
     </div>
-
-    <hr />
-
-    <form action="/edit/{{.ID}}" method="POST">
-      <div><textarea name="content" rows="20" cols="80">{{.Content}}</textarea></div>
-      <div><input type="submit" value="Save"></div>
-    </form>
-
 
   </body>
 </html>

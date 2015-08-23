@@ -9,15 +9,13 @@ import (
 	"time"
 )
 
-//import "github.com/russross/blackfriday"
 import "github.com/shurcooL/github_flavored_markdown"
 
 func todoHandler(storage Storage) http.HandlerFunc {
-	tmpl, _ := template.ParseFiles("templates/todo.html")
 	fn := func(w http.ResponseWriter, r *http.Request) {
+		tmpl, _ := template.ParseFiles("templates/todo.html")
 		id := r.URL.Path[len("/todo/"):]
 		val := storage.Get(id)
-		//		markdown := string(blackfriday.MarkdownCommon(([]byte)(val.Content)))
 		markdown := string(github_flavored_markdown.Markdown(([]byte)(val.Content)))
 
 		out := struct {
@@ -90,6 +88,7 @@ func main() {
 	http.HandleFunc("/todo/", todoHandler(storage))
 	http.HandleFunc("/edit/", postEditHandler(storage))
 	http.HandleFunc("/new/", postNewHandler(storage))
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
 	http.HandleFunc("/", indexHandler(storage))
 
 	log.Printf("listen %s...", port)
