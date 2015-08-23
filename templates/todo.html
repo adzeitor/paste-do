@@ -2,6 +2,11 @@
 
 <head>
   <link href="/public/bootstrap.min.css" rel="stylesheet">
+  <link href="/public/github-markdown.css" rel="stylesheet">
+  <link rel="stylesheet" href="/public/highlight-style.min.css">
+  <script src="/public/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
 </head>
   <body>
 
@@ -18,9 +23,9 @@
 
       <hr />
 
-      <div>
+      <article class="markdown-body">
         {{.MarkdownContent}}
-      </div>
+      </article>
 
       <hr />
 
@@ -30,5 +35,14 @@
       </form>
     </div>
 
+    <script>
+      window.onload = function() {
+        var aCodes = document.getElementsByTagName('pre');
+        for (var i=0; i < aCodes.length; i++) {
+                        hljs.highlightBlock(aCodes[i]);
+        }
+      };
+
+    </script>
   </body>
 </html>
