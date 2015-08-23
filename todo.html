@@ -1,0 +1,25 @@
+<html>
+
+
+  <body>
+
+    <h1>Editing <a href="/todo/{{.ID}}">{{.ID}}</a> (visits: {{.Visits}})</h1>
+
+    <time>{{.CreatedAt}}</time>
+
+    <hr />
+
+    <div>
+      {{.MarkdownContent}}
+    </div>
+
+    <hr />
+
+    <form action="/edit/{{.ID}}" method="POST">
+      <div><textarea name="content" rows="20" cols="80">{{.Content}}</textarea></div>
+      <div><input type="submit" value="Save"></div>
+    </form>
+
+
+  </body>
+</html>
