@@ -12,7 +12,7 @@ func PasteEdit(storage Storage, id string, content string) error {
 		return errors.New("read only link")
 	}
 
-	r.Content   = content
+	r.Content = content
 
 	if len(r.Content) > 1024*1024 {
 		return errors.New("Paste is too long")
@@ -21,7 +21,6 @@ func PasteEdit(storage Storage, id string, content string) error {
 	r.UpdatedAt = time.Now()
 
 	storage.Save(r)
-
 
 	return nil
 }

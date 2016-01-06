@@ -2,8 +2,8 @@ package main
 
 import (
 	"math/rand"
-	"time"
 	"sync"
+	"time"
 )
 
 type MemoryStorage struct {
@@ -22,19 +22,19 @@ func NewMemoryStorage() *MemoryStorage {
 	}
 }
 
-func (s *MemoryStorage) New(content string) (Record,error) {
+func (s *MemoryStorage) New(content string) (Record, error) {
 	id := genID(s.Random)
 	// FIXME: use independent random generators
 	adminID := genID(s.Random)
 	now := time.Now()
 
 	r := Record{
-		ID: id,
-		AdminID: adminID,
-		Content: content,
+		ID:        id,
+		AdminID:   adminID,
+		Content:   content,
 		CreatedAt: now,
-		UpdatedAt:now,
-		ReadOnly: true,
+		UpdatedAt: now,
+		ReadOnly:  true,
 	}
 
 	s.Items[id] = r
@@ -42,9 +42,8 @@ func (s *MemoryStorage) New(content string) (Record,error) {
 	r.ReadOnly = false
 	s.Items[adminID] = r
 
-	return r,nil
+	return r, nil
 }
-
 
 func (s *MemoryStorage) Get(id string) Record {
 	return s.Items[id]

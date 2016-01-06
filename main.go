@@ -20,7 +20,7 @@ func todoHandler(storage Storage) http.HandlerFunc {
 
 		out := struct {
 			ID              string
-			AdminID        string
+			AdminID         string
 			Content         string
 			Visits          uint64
 			CreatedAt       time.Time
@@ -45,7 +45,7 @@ func todoHandler(storage Storage) http.HandlerFunc {
 func postNewHandler(storage Storage) http.HandlerFunc {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		body := r.FormValue("content")
-		created,_ := storage.New(body)
+		created, _ := storage.New(body)
 		http.Redirect(w, r, "/todo/"+created.AdminID, http.StatusFound)
 	}
 	return fn
@@ -95,7 +95,7 @@ func main() {
 
 		host := u.Host
 
-		storage,err = NewRedisStorage(host, pass)
+		storage, err = NewRedisStorage(host, pass)
 		if err != nil {
 			log.Fatal(err)
 		}

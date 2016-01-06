@@ -5,10 +5,9 @@ import (
 	"time"
 )
 
-
 type Record struct {
-	ID        string
-	AdminID   string
+	ID      string
+	AdminID string
 	// FIXME: Reader
 	Content   string
 	Visits    uint64
@@ -19,7 +18,7 @@ type Record struct {
 }
 
 type Storage interface {
-	New(string) (Record,error)
+	New(string) (Record, error)
 	Get(string) Record
 	Save(Record) error
 }

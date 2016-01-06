@@ -1,10 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"gopkg.in/redis.v3"
 	"math/rand"
 	"time"
-	"encoding/json"
 )
 
 type RedisStorage struct {
@@ -12,7 +12,7 @@ type RedisStorage struct {
 	Random *rand.Rand
 }
 
-func NewRedisStorage(redisAddr string, redisPassword string) (*RedisStorage,error) {
+func NewRedisStorage(redisAddr string, redisPassword string) (*RedisStorage, error) {
 
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
@@ -30,18 +30,18 @@ func NewRedisStorage(redisAddr string, redisPassword string) (*RedisStorage,erro
 
 	return &RedisStorage{
 		Client: client,
-		Random: random,}, nil
+		Random: random}, nil
 }
 
-func (s *RedisStorage) New(content string) (Record,error) {
-	id      := genID(s.Random)
+func (s *RedisStorage) New(content string) (Record, error) {
+	id := genID(s.Random)
 	adminID := genID(s.Random)
 
 	now := time.Now()
 
 	r := Record{
-		ID: id,
-		AdminID: adminID,
+		ID:        id,
+		AdminID:   adminID,
 		Content:   content,
 		Visits:    0,
 		CreatedAt: now,
@@ -50,14 +50,13 @@ func (s *RedisStorage) New(content string) (Record,error) {
 
 	s.Save(r)
 
-	return r,nil
+	return r, nil
 }
 
-
 func (s *RedisStorage) Get(id string) Record {
-	content, err  := s.Client.Get("todo-" + id).Result()
+	content, err := s.Client.Get("todo-" + id).Result()
 
- 	if err == redis.Nil {
+	if err == redis.Nil {
 		return Record{
 			Content:   "0x831ab128!",
 			Visits:    42,
@@ -75,15 +74,15 @@ func (s *RedisStorage) Save(r Record) error {
 	expireAfter := time.Hour * 24
 
 	r.ReadOnly = true
-	res,err := json.Marshal(r)
- 	if err != nil {
+	res, err := json.Marshal(r)
+	if err != nil {
 		return err
 	}
-	s.Client.Set("todo-"+r.ID, res,  expireAfter)
+	s.Client.Set("todo-"+r.ID, res, expireAfter)
 
 	r.ReadOnly = false
-	res,err = json.Marshal(r)
- 	if err != nil {
+	res, err = json.Marshal(r)
+	if err != nil {
 		return err
 	}
 	s.Client.Set("todo-"+r.AdminID, res, expireAfter)
