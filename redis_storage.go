@@ -2,12 +2,17 @@ package main
 
 import (
 	"gopkg.in/redis.v3"
-	"log"
 	"math/rand"
 	"time"
+	"encoding/json"
 )
 
-func NewRedisStorage(redisAddr string, redisPassword string) Storage {
+type RedisStorage struct {
+	Client *redis.Client
+	Random *rand.Rand
+}
+
+func NewRedisStorage(redisAddr string, redisPassword string) (*RedisStorage,error) {
 
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
@@ -15,77 +20,73 @@ func NewRedisStorage(redisAddr string, redisPassword string) Storage {
 		DB:       0, // default db
 	})
 
-	pong, err := client.Ping().Result()
-	log.Println("redis ping: ", pong, err)
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	_, err := client.Ping().Result()
 
-	newRecords := make(chan NewRecord)
-	getRecords := make(chan GetRecord)
-	editRecords := make(chan EditRecord)
+	if err != nil {
+		return nil, err
+	}
 
-	maxLength := 2048
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	return &RedisStorage{
+		Client: client,
+		Random: random,}, nil
+}
+
+func (s *RedisStorage) New(content string) (Record,error) {
+	id      := genID(s.Random)
+	adminID := genID(s.Random)
+
+	now := time.Now()
+
+	r := Record{
+		ID: id,
+		AdminID: adminID,
+		Content:   content,
+		Visits:    0,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	s.Save(r)
+
+	return r,nil
+}
+
+
+func (s *RedisStorage) Get(id string) Record {
+	content, err  := s.Client.Get("todo-" + id).Result()
+
+ 	if err == redis.Nil {
+		return Record{
+			Content:   "0x831ab128!",
+			Visits:    42,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now()}
+	}
+
+	var r Record
+	json.Unmarshal([]byte(content), &r)
+
+	return r
+}
+
+func (s *RedisStorage) Save(r Record) error {
 	expireAfter := time.Hour * 24
 
-	go func() {
-		for {
-			select {
-			// new
-			case c := <-newRecords:
-				id := genID(r)
-				if len(c.Content) > maxLength {
-					c.Content = c.Content[:maxLength]
-				}
-				client.Set("todo-"+id, c.Content, 0)
-				c.Result <- id
-			// get
-			case c := <-getRecords:
-				content, err := client.Get("todo-" + c.ID).Result()
+	r.ReadOnly = true
+	res,err := json.Marshal(r)
+ 	if err != nil {
+		return err
+	}
+	s.Client.Set("todo-"+r.ID, res,  expireAfter)
 
-				if err == redis.Nil {
-					log.Println("redis error:", err)
-					c.Result <- &Record{
-						Content:   "0x831ab128!",
-						Visits:    42,
-						CreatedAt: time.Now(),
-						UpdatedAt: time.Now()}
-					continue
-				}
+	r.ReadOnly = false
+	res,err = json.Marshal(r)
+ 	if err != nil {
+		return err
+	}
+	s.Client.Set("todo-"+r.AdminID, res, expireAfter)
 
-				r := &Record{
-					Content:   content,
-					Visits:    42,
-					CreatedAt: time.Now(),
-					UpdatedAt: time.Now()}
-
-				c.Result <- r
-			// edit
-			case c := <-editRecords:
-				content, err := client.Get("todo-" + c.ID).Result()
-
-				if err == redis.Nil {
-					c.Result <- &Record{
-						Content:   "0x831ab128!",
-						Visits:    42,
-						CreatedAt: time.Now(),
-						UpdatedAt: time.Now()}
-					continue
-				}
-				client.Set("todo-"+c.ID, c.Content, expireAfter)
-
-				r := &Record{
-					Content:   content,
-					Visits:    42,
-					CreatedAt: time.Now(),
-					UpdatedAt: time.Now()}
-				c.Result <- r
-			}
-		}
-		// get
-
-	}()
-
-	return Storage{
-		NewChan:  newRecords,
-		GetChan:  getRecords,
-		EditChan: editRecords}
+	return nil
 }

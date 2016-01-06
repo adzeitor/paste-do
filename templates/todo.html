@@ -11,11 +11,11 @@
   <body>
 
     <div class="container">
-
       <h1><a href="/todo/{{.ID}}">{{.ID}}</a> (visits: {{.Visits}})</h1>
 
-
-      <a href="/todo/{{.ID}}">admin link</a> <br/>
+      {{if not .ReadOnly}}
+      <a href="/todo/{{.AdminID}}">admin link</a> <br/>
+      {{end}}
       <a href="/todo/{{.ID}}">read-only link</a>
 
       <progress class="progress progress-success" value="25" max="100">25%</progress>
@@ -29,10 +29,12 @@
 
       <hr />
 
-      <form action="/edit/{{.ID}}" method="POST">
+      {{if not .ReadOnly}}
+      <form action="/edit/{{.AdminID}}" method="POST">
         <div><textarea name="content" rows="20" cols="80">{{.Content}}</textarea></div>
         <div><input type="submit" value="Save"></div>
       </form>
+      {{end}}
     </div>
 
     <script>

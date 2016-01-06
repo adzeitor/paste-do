@@ -3,69 +3,63 @@ package main
 import (
 	"math/rand"
 	"time"
-	"fmt"
+	"sync"
 )
 
+type MemoryStorage struct {
+	Items  map[string]Record
+	Random *rand.Rand
+	sync.Mutex
+}
+
+func NewMemoryStorage() *MemoryStorage {
+
+	m := make(map[string]Record)
+
+	return &MemoryStorage{
+		Random: rand.New(rand.NewSource(42)),
+		Items:  m,
+	}
+}
+
+func (s *MemoryStorage) New(content string) (Record,error) {
+	id := genID(s.Random)
+	// FIXME: use independent random generators
+	adminID := genID(s.Random)
+	now := time.Now()
+
+	r := Record{
+		ID: id,
+		AdminID: adminID,
+		Content: content,
+		CreatedAt: now,
+		UpdatedAt:now,
+		ReadOnly: true,
+	}
+
+	s.Items[id] = r
+
+	r.ReadOnly = false
+	s.Items[adminID] = r
+
+	return r,nil
+}
 
 
-func NewMemoryStorage(prefix string) Storage {
-	// FIXME: ...
-	r := rand.New(rand.NewSource(42))
+func (s *MemoryStorage) Get(id string) Record {
+	return s.Items[id]
+}
 
-	m := make(map[string](*Record))
+func (s *MemoryStorage) Save(r Record) error {
+	s.Lock()
 
-	newRecords := make(chan NewRecord)
-	getRecords := make(chan GetRecord)
-	editRecords := make(chan EditRecord)
+	// read only link
+	r.ReadOnly = true
+	s.Items[r.ID] = r
+	// admin link
+	r.ReadOnly = false
+	s.Items[r.AdminID] = r
 
-	go func() {
-		for {
-			select {
-			// new
-			case c :=  <-newRecords:
-				id := genID(r)
-				now := time.Now()
-				m[id] = &Record{
-					Content: c.Content,
-					Visits:  0,
-					CreatedAt: now,
-					UpdatedAt: now}
-				c.Result <- id
-			// get
-			case c := <-getRecords:
-				val, ok := m[c.ID]
-				if ok == false {
-					c.Result <- &Record{
-						Content: "0x831ab128!",
-						Visits:  42,
-						CreatedAt: time.Now(),
-						UpdatedAt: time.Now()}
-					continue
-				}
-				val.Visits += 1
-				c.Result <- val
-			// edit
-			case c := <-editRecords:
-				fmt.Println(c)
-				val, ok := m[c.ID]
-				if ok == false {
-					c.Result <- &Record{
-						Content: "0x831ab128!",
-						Visits:  42,
-						CreatedAt: time.Now(),
-						UpdatedAt: time.Now()}
-					continue
-				}
-				val.Content = c.Content
-				c.Result <- val
-			}
-		}
-		// get
-
-	}()
-
-	return Storage{
-		NewChan:newRecords,
-		GetChan:getRecords,
-		EditChan:editRecords}
+	s.Unlock()
+	return nil
 }

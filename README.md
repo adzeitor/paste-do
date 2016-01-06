@@ -4,8 +4,16 @@
 
 # running
 
+## in-memory backend
+
 ```bash
-$ PORT=9000 BACKEND=memory paste-do
+$ PORT=9000 BACKEND=memory ./paste-do
+```
+
+## redis backend
+
+```bash
+$ PORT=3000 BACKEND=redis REDIS_URL="redis://h:@localhost:6379" ./paste-do
 ```
 
 # installation
