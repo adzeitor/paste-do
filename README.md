@@ -17,5 +17,4 @@ $ PORT=3000 BACKEND=redis REDIS_URL="redis://h:@localhost:6379" ./paste-do
 ```
 
 # installation
-
-**TODO**
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
